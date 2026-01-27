@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { initGA, trackPageView, trackEvent } from './analytics'
 import { GuideView } from './components/GuideView'
 import { NutritionalFactsView } from './components/NutritionalFactsView'
@@ -82,6 +83,7 @@ export default function App() {
                                             <DiabeticTipsView />}
                 </div>
             </div>
+            <Analytics />
         </div>
     )
 }
