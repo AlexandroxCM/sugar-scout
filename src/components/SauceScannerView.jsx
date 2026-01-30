@@ -1,4 +1,183 @@
-import { AlertTriangle, Droplet, Search } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { AlertTriangle, Droplet, Search, Zap, X } from 'lucide-react'
+import { interactiveSauces, getRiskColor } from '../interactiveSauceData'
+
+// Interactive Sauce Analyzer Component
+function InteractiveSauceAnalyzer() {
+    const [selectedSauce, setSelectedSauce] = useState(null);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [meterAnimation, setMeterAnimation] = useState(0);
+
+    useEffect(() => {
+        if (selectedSauce) {
+            // Animate the meter
+            setMeterAnimation(0);
+            const targetValue = (selectedSauce.sugar_value / 15) * 100; // Max 15g for scale
+            const timer = setTimeout(() => {
+                setMeterAnimation(Math.min(targetValue, 100));
+            }, 50);
+
+            // Show tooltip for high sugar sauces
+            if (selectedSauce.risk_level === 'High') {
+                setShowTooltip(true);
+            } else {
+                setShowTooltip(false);
+            }
+
+            return () => clearTimeout(timer);
+        }
+    }, [selectedSauce]);
+
+    const riskColors = selectedSauce ? getRiskColor(selectedSauce.risk_level) : null;
+
+    return (
+        <div className="space-y-6">
+            {/* Sauce Icon Scroll */}
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-3">
+                    Tap a sauce to analyze
+                </h3>
+                <div className="overflow-x-auto pb-2 -mx-2 px-2">
+                    <div className="flex gap-3 min-w-max">
+                        {interactiveSauces.map((sauce) => {
+                            const colors = getRiskColor(sauce.risk_level);
+                            const isSelected = selectedSauce?.id === sauce.id;
+                            return (
+                                <button
+                                    key={sauce.id}
+                                    onClick={() => setSelectedSauce(sauce)}
+                                    className={`flex flex-col items-center p-3 rounded-xl transition-all duration-200 min-w-[72px] ${isSelected
+                                        ? 'bg-slate-100 ring-2 ring-offset-2 scale-105'
+                                        : 'bg-slate-50 hover:bg-slate-100 hover:scale-102'
+                                        }`}
+                                    style={{
+                                        ringColor: isSelected ? colors.bg : 'transparent'
+                                    }}
+                                >
+                                    <span className="text-3xl mb-1">{sauce.icon}</span>
+                                    <span className="text-xs font-medium text-slate-700 text-center leading-tight">
+                                        {sauce.name}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            {/* Sugar Meter */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-4 text-center">
+                    Sugar Meter
+                </h3>
+
+                {selectedSauce ? (
+                    <div className="flex flex-col items-center">
+                        {/* Circular Gauge */}
+                        <div className="relative w-48 h-48 mb-4">
+                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                {/* Background circle */}
+                                <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="40"
+                                    fill="none"
+                                    stroke="#e2e8f0"
+                                    strokeWidth="12"
+                                />
+                                {/* Progress arc */}
+                                <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="40"
+                                    fill="none"
+                                    stroke={riskColors.bg}
+                                    strokeWidth="12"
+                                    strokeLinecap="round"
+                                    strokeDasharray={`${meterAnimation * 2.51} 251`}
+                                    className="transition-all duration-700 ease-out"
+                                />
+                            </svg>
+                            {/* Center content */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-4xl mb-1">{selectedSauce.icon}</span>
+                                <span
+                                    className="text-3xl font-black"
+                                    style={{ color: riskColors.bg }}
+                                >
+                                    {selectedSauce.sugar_value}g
+                                </span>
+                                <span className="text-xs font-medium text-slate-500">sugar</span>
+                            </div>
+                        </div>
+
+                        {/* Risk Level Badge */}
+                        <div
+                            className="px-4 py-2 rounded-full font-bold text-sm uppercase tracking-wider"
+                            style={{
+                                backgroundColor: riskColors.bg + '20',
+                                color: riskColors.text
+                            }}
+                        >
+                            {riskColors.label}
+                        </div>
+
+                        {/* Legend */}
+                        <div className="flex gap-4 mt-4 text-xs">
+                            <div className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                                <span className="text-slate-600">0-2g</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                                <span className="text-slate-600">3-6g</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                                <span className="text-slate-600">7g+</span>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center py-8 text-slate-400">
+                        <Droplet size={48} className="mb-2 opacity-50" />
+                        <p className="text-sm">Select a sauce above to see its sugar content</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Watchout Tooltip Popup */}
+            {showTooltip && selectedSauce && (
+                <div className="fixed inset-x-4 bottom-24 md:static md:inset-auto z-50">
+                    <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 shadow-lg relative animate-pulse">
+                        <button
+                            onClick={() => setShowTooltip(false)}
+                            className="absolute top-2 right-2 text-red-400 hover:text-red-600"
+                        >
+                            <X size={20} />
+                        </button>
+                        <div className="flex gap-3 items-start">
+                            <AlertTriangle className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="text-red-900 font-bold text-sm mb-1">
+                                    ⚠️ High Sugar Alert!
+                                </h4>
+                                <p className="text-red-800 text-sm">
+                                    {selectedSauce.tip}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Disclaimer */}
+            <p className="text-xs text-center text-slate-400 italic px-4">
+                Visual estimates only. Every body reacts differently. Check your CGM/BGM regularly.
+            </p>
+        </div>
+    );
+}
 
 const sauceData = [
     {
@@ -364,64 +543,86 @@ const sauceData = [
 ]
 
 export function SauceScannerView() {
+    const [isInteractiveMode, setIsInteractiveMode] = useState(false);
+
     return (
         <div className="space-y-6">
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <div className="flex gap-3 items-start">
-                    <AlertTriangle className="w-6 h-6 text-red-600 shrink-0" />
-                    <div>
-                        <h3 className="text-red-900 font-bold text-lg">Hidden Sugar Trap</h3>
-                        <p className="text-red-800 text-sm">
-                            Condiments are the #1 reason for unexpected glucose spikes. A "healthy" chicken breast can become a sugar bomb with just one dip cup.
-                        </p>
-                    </div>
-                </div>
+            {/* Mode Toggle */}
+            <div className="flex justify-center">
+                <button
+                    onClick={() => setIsInteractiveMode(!isInteractiveMode)}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm transition-all duration-300 shadow-md ${isInteractiveMode
+                            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
+                            : 'bg-white text-slate-700 border border-slate-200 hover:border-blue-300'
+                        }`}
+                >
+                    <Zap size={18} className={isInteractiveMode ? 'animate-pulse' : ''} />
+                    {isInteractiveMode ? 'Interactive Mode ON' : 'Try Interactive Mode'}
+                </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sauceData.map((sauce, idx) => (
-                    <div key={idx} className={`relative overflow-hidden rounded-xl border p-5 shadow-sm transition-all hover:shadow-md ${sauce.verdict === 'Deadly' ? 'bg-red-50 border-red-200' :
-                        sauce.verdict === 'Danger' ? 'bg-orange-50 border-orange-200' :
-                            sauce.verdict === 'Caution' ? 'bg-yellow-50 border-yellow-200' :
-                                'bg-green-50 border-green-200'
-                        }`}>
-                        <div className="flex justify-between items-start mb-2">
+            {isInteractiveMode ? (
+                <InteractiveSauceAnalyzer />
+            ) : (
+                <>
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <div className="flex gap-3 items-start">
+                            <AlertTriangle className="w-6 h-6 text-red-600 shrink-0" />
                             <div>
-                                <span className="text-xs font-bold uppercase tracking-wider opacity-70 mb-1 block">
-                                    {sauce.restaurant}
-                                </span>
-                                <h3 className="font-bold text-lg text-slate-900 leading-tight">
-                                    {sauce.name}
-                                </h3>
+                                <h3 className="text-red-900 font-bold text-lg">Hidden Sugar Trap</h3>
+                                <p className="text-red-800 text-sm">
+                                    Condiments are the #1 reason for unexpected glucose spikes. A "healthy" chicken breast can become a sugar bomb with just one dip cup.
+                                </p>
                             </div>
-                            <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${sauce.verdict === 'Deadly' ? 'bg-red-200 text-red-800' :
-                                sauce.verdict === 'Danger' ? 'bg-orange-200 text-orange-800' :
-                                    sauce.verdict === 'Caution' ? 'bg-yellow-200 text-yellow-800' :
-                                        'bg-green-200 text-green-800'
-                                }`}>
-                                {sauce.verdict}
-                            </span>
-                        </div>
-
-                        <p className="text-sm text-slate-700 italic mb-4">"{sauce.desc}"</p>
-
-                        <div className="flex gap-4">
-                            <div className="bg-white/60 p-2 rounded-lg text-center min-w-[60px]">
-                                <div className="text-xl font-black text-slate-800">{sauce.sugar}</div>
-                                <div className="text-[10px] font-bold uppercase text-slate-500">Sugar</div>
-                            </div>
-                            <div className="bg-white/60 p-2 rounded-lg text-center min-w-[60px]">
-                                <div className="text-lg font-bold text-slate-700">{sauce.carbs}</div>
-                                <div className="text-[10px] font-bold uppercase text-slate-500">Carbs</div>
-                            </div>
-                        </div>
-
-                        <div className="absolute right-[-20px] bottom-[-20px] text-current opacity-5 pointer-events-none">
-                            <Droplet size={120} />
                         </div>
                     </div>
-                ))}
-            </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {sauceData.map((sauce, idx) => (
+                            <div key={idx} className={`relative overflow-hidden rounded-xl border p-5 shadow-sm transition-all hover:shadow-md ${sauce.verdict === 'Deadly' ? 'bg-red-50 border-red-200' :
+                                sauce.verdict === 'Danger' ? 'bg-orange-50 border-orange-200' :
+                                    sauce.verdict === 'Caution' ? 'bg-yellow-50 border-yellow-200' :
+                                        'bg-green-50 border-green-200'
+                                }`}>
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <span className="text-xs font-bold uppercase tracking-wider opacity-70 mb-1 block">
+                                            {sauce.restaurant}
+                                        </span>
+                                        <h3 className="font-bold text-lg text-slate-900 leading-tight">
+                                            {sauce.name}
+                                        </h3>
+                                    </div>
+                                    <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${sauce.verdict === 'Deadly' ? 'bg-red-200 text-red-800' :
+                                        sauce.verdict === 'Danger' ? 'bg-orange-200 text-orange-800' :
+                                            sauce.verdict === 'Caution' ? 'bg-yellow-200 text-yellow-800' :
+                                                'bg-green-200 text-green-800'
+                                        }`}>
+                                        {sauce.verdict}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm text-slate-700 italic mb-4">"{sauce.desc}"</p>
+
+                                <div className="flex gap-4">
+                                    <div className="bg-white/60 p-2 rounded-lg text-center min-w-[60px]">
+                                        <div className="text-xl font-black text-slate-800">{sauce.sugar}</div>
+                                        <div className="text-[10px] font-bold uppercase text-slate-500">Sugar</div>
+                                    </div>
+                                    <div className="bg-white/60 p-2 rounded-lg text-center min-w-[60px]">
+                                        <div className="text-lg font-bold text-slate-700">{sauce.carbs}</div>
+                                        <div className="text-[10px] font-bold uppercase text-slate-500">Carbs</div>
+                                    </div>
+                                </div>
+
+                                <div className="absolute right-[-20px] bottom-[-20px] text-current opacity-5 pointer-events-none">
+                                    <Droplet size={120} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     )
 }

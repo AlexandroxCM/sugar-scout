@@ -8,6 +8,7 @@ import { SauceScannerView } from './components/SauceScannerView'
 import { CommunityHacksView } from './components/CommunityHacksView'
 import { SupplyFinderView } from './components/SupplyFinderView'
 import { EventsView } from './components/EventsView'
+import { GlucoseLabView } from './components/GlucoseLabView'
 
 import { OnboardingModal } from './components/OnboardingModal'
 import { MedicalDisclaimer } from './components/MedicalDisclaimer'
@@ -30,6 +31,7 @@ export default function App() {
         { id: 'guide', label: 'Restaurants' },
         { id: 'nutrition', label: 'Nutrition' },
         { id: 'scanner', label: 'Sauce Scanner' },
+        { id: 'lab', label: 'The Lab' },
         { id: 'supplies', label: 'Supplies' },
         { id: 'hacks', label: 'Hacks' },
         { id: 'events', label: 'Events' },
@@ -77,10 +79,11 @@ export default function App() {
                     {activeTab === 'guide' ? <GuideView /> :
                         activeTab === 'nutrition' ? <NutritionalFactsView /> :
                             activeTab === 'scanner' ? <SauceScannerView /> :
-                                activeTab === 'supplies' ? <SupplyFinderView /> :
-                                    activeTab === 'hacks' ? <CommunityHacksView /> :
-                                        activeTab === 'events' ? <EventsView /> :
-                                            <DiabeticTipsView />}
+                                activeTab === 'lab' ? <GlucoseLabView /> :
+                                    activeTab === 'supplies' ? <SupplyFinderView /> :
+                                        activeTab === 'hacks' ? <CommunityHacksView /> :
+                                            activeTab === 'events' ? <EventsView /> :
+                                                <DiabeticTipsView />}
                 </div>
             </div>
             <Analytics />
