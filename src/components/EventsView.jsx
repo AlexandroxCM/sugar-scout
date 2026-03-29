@@ -76,58 +76,61 @@ export function EventsView() {
     ]
 
     return (
-        <div className="space-y-6">
-            <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
-                <h2 className="text-2xl font-bold mb-2">Connect with the Community</h2>
-                <p className="text-blue-50">
-                    Discover camps, meetups, and events to connect with other Type 1 and Type 2 diabetics.
-                    You are not alone in this journey!
+        <div className="space-y-6 animate-fadeIn">
+            <div className="bg-slate-900/80 backdrop-blur-md rounded-[2rem] p-8 text-white shadow-[0_0_30px_rgba(6,182,212,0.15)] border border-cyan-500/30 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 pointer-events-none"></div>
+                <div className="relative z-10">
+                    <h2 className="text-3xl font-black mb-3 tracking-tight drop-shadow-md">Connect with the Community</h2>
+                    <p className="text-cyan-100/90 leading-relaxed max-w-2xl">
+                        Discover camps, meetups, and events to connect with other Type 1 and Type 2 diabetics.
+                        You are not alone in this journey!
+                    </p>
+                </div>
+            </div>
+
+            <div className="bg-amber-950/40 border border-amber-900/50 rounded-2xl p-5 text-sm text-amber-200/90 flex gap-4 shadow-inner relative z-10">
+                <Calendar className="w-5 h-5 flex-shrink-0 text-amber-500" />
+                <p className="leading-relaxed">
+                    <strong className="text-amber-400 uppercase tracking-widest text-xs">Tip:</strong> Many of these camps fill up quickly! It's recommended to check their websites early in the year (Jan/Feb) for summer registration.
                 </p>
             </div>
 
-            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800 flex gap-3">
-                <Calendar className="w-5 h-5 flex-shrink-0" />
-                <p>
-                    <strong>Tip:</strong> Many of these camps fill up quickly! It's recommended to check their websites early in the year (Jan/Feb) for summer registration.
-                </p>
-            </div>
-
-            <div className="grid gap-6">
+            <div className="grid gap-6 relative z-10">
                 {events.map((event) => (
                     <div
                         key={event.id}
-                        className={`bg-white rounded-xl border transition-all hover:shadow-md overflow-hidden ${event.highlight ? 'border-blue-200 ring-4 ring-blue-50/50' : 'border-slate-200'
+                        className={`bg-slate-900 rounded-3xl border transition-all duration-300 hover:shadow-2xl overflow-hidden hover:-translate-y-1 ${event.highlight ? 'border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-cyan-500/20' : 'border-slate-800 hover:border-slate-700'
                             }`}
                     >
-                        <div className="p-6">
-                            <div className="flex justify-between items-start mb-4">
+                        <div className="p-6 md:p-8">
+                            <div className="flex justify-between items-start mb-6">
                                 <div>
-                                    <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <h3 className="text-2xl font-bold text-white flex items-center gap-3 mb-1">
                                         {event.title}
-                                        {event.highlight && <Heart className="w-5 h-5 text-red-500 fill-current" />}
+                                        {event.highlight && <Heart className="w-5 h-5 text-rose-500 fill-current drop-shadow-[0_0_10px_rgba(244,63,94,0.5)]" />}
                                     </h3>
-                                    <p className="text-slate-500 font-medium">{event.organizer}</p>
+                                    <p className="text-slate-400 font-medium uppercase tracking-widest text-[10px]">{event.organizer}</p>
                                 </div>
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${event.highlight
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'bg-slate-100 text-slate-600'
+                                <span className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border ${event.highlight
+                                    ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.2)]'
+                                    : 'bg-slate-800 text-slate-400 border-slate-700'
                                     }`}>
                                     {event.type}
                                 </span>
                             </div>
 
-                            <p className="text-slate-600 mb-6 leading-relaxed">
+                            <p className="text-slate-300 mb-8 leading-relaxed max-w-4xl">
                                 {event.description}
                             </p>
 
-                            <div className="flex flex-wrap gap-4 text-sm text-slate-500 mb-6">
-                                <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg">
-                                    <MapPin className="w-4 h-4 text-slate-400" />
-                                    {event.location}
+                            <div className="flex flex-wrap gap-4 text-xs font-bold uppercase tracking-widest text-slate-500 mb-8">
+                                <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 px-3 py-1.5 rounded-lg">
+                                    <MapPin className="w-4 h-4 text-cyan-500" />
+                                    <span className="text-slate-300">{event.location}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {event.tags.map(tag => (
-                                        <span key={tag} className="text-slate-400">#{tag}</span>
+                                        <span key={tag} className="text-slate-500 bg-slate-900 border border-slate-800 px-2 py-1.5 rounded-md">#{tag}</span>
                                     ))}
                                 </div>
                             </div>
@@ -136,7 +139,7 @@ export function EventsView() {
                                 href={event.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-colors gap-2"
+                                className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-cyan-500/50 text-white font-bold text-sm tracking-wide rounded-full transition-all duration-300 gap-2 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]"
                             >
                                 Visit Website
                                 <ExternalLink className="w-4 h-4" />

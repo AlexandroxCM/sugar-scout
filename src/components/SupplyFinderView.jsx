@@ -101,31 +101,31 @@ export function SupplyFinderView() {
         : resources.filter(r => r.category === filter)
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                <div className="max-w-2xl">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Supply Finder</h2>
-                    <p className="text-slate-600 mb-4">
+        <div className="space-y-6 animate-fadeIn">
+            <div className="bg-slate-900 rounded-[2rem] shadow-xl border border-slate-800 p-8 relative z-10">
+                <div className="max-w-2xl relative z-10">
+                    <h2 className="text-3xl font-black text-white mb-3 tracking-tight drop-shadow-md">Supply Finder</h2>
+                    <p className="text-slate-400 mb-6 leading-relaxed">
                         A collection of resources for uninsured or underinsured diabetics.
                         These organizations and communities help provide essential supplies like insulin, test strips, and pump parts.
                     </p>
 
-                    <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-sm text-indigo-800">
-                        <strong>Note:</strong> Sugar Scout shares these resources for informational purposes.
+                    <div className="p-5 bg-cyan-950/40 border border-cyan-900/50 rounded-2xl text-sm text-cyan-200/90 leading-relaxed shadow-inner">
+                        <strong className="text-cyan-400 uppercase tracking-widest text-xs">Note:</strong> Sugar Scout shares these resources for informational purposes.
                         We do not manage these programs directly. Always verify safety when receiving supplies from community sources.
                     </div>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 relative z-10">
                 {categories.map(cat => (
                     <button
                         key={cat}
                         onClick={() => setFilter(cat)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === cat
-                            ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200'
-                            : 'bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200'
+                        className={`px-5 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 border ${filter === cat
+                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                            : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-emerald-500/50 hover:text-emerald-300 hover:bg-slate-800'
                             }`}
                     >
                         {cat}
@@ -141,28 +141,28 @@ export function SupplyFinderView() {
                         href={resource.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:border-emerald-500 hover:shadow-md transition-all duration-200"
+                        className="group flex flex-col bg-slate-900 rounded-3xl shadow-xl border border-slate-800 p-6 hover:border-emerald-500/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                     >
-                        <div className="flex justify-between items-start mb-2">
-                            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                        <div className="flex justify-between items-start mb-4">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
                                 {resource.category}
                             </span>
-                            <svg className="w-5 h-5 text-slate-300 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-slate-600 group-hover:text-emerald-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
                         </div>
 
-                        <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-emerald-700">
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
                             {resource.name}
                         </h3>
 
-                        <p className="text-slate-600 text-sm mb-4 flex-grow">
+                        <p className="text-slate-400 text-sm mb-6 flex-grow leading-relaxed">
                             {resource.description}
                         </p>
 
                         <div className="flex flex-wrap gap-2 mt-auto">
                             {resource.tags.map(tag => (
-                                <span key={tag} className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                                <span key={tag} className="text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-800/50 border border-slate-700/50 px-2 py-1 rounded-md">
                                     #{tag}
                                 </span>
                             ))}

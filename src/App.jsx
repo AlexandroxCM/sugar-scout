@@ -9,6 +9,7 @@ import { CommunityHacksView } from './components/CommunityHacksView'
 import { SupplyFinderView } from './components/SupplyFinderView'
 import { EventsView } from './components/EventsView'
 import { GlucoseLabView } from './components/GlucoseLabView'
+import { InsulinDecayView } from './components/InsulinDecayView'
 
 import { OnboardingModal } from './components/OnboardingModal'
 import { MedicalDisclaimer } from './components/MedicalDisclaimer'
@@ -32,6 +33,7 @@ export default function App() {
         { id: 'nutrition', label: 'Nutrition' },
         { id: 'scanner', label: 'Sauce Scanner' },
         { id: 'lab', label: 'The Lab' },
+        { id: 'iob', label: 'IOB Math' },
         { id: 'supplies', label: 'Supplies' },
         { id: 'hacks', label: 'Hacks' },
         { id: 'events', label: 'Events' },
@@ -39,7 +41,7 @@ export default function App() {
     ]
 
     return (
-        <div className="min-h-screen bg-[#E0F2FE] p-4 md:p-8">
+        <div className="min-h-screen bg-slate-950 p-4 md:p-8 selection:bg-cyan-500/30">
             {!disclaimerAccepted && (
                 <MedicalDisclaimer onAccept={() => {
                     setDisclaimerAccepted(true);
@@ -50,22 +52,22 @@ export default function App() {
             <div className="max-w-3xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="text-center space-y-2">
-                    <img src={logo} alt="Sugar Scout Logo" className="w-32 h-32 mx-auto object-contain mb-4" />
-                    <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Sugar Scout</h1>
-                    <p className="text-slate-500 font-medium">Diabetic-friendly guide</p>
+                    <img src={logo} alt="Sugar Scout Logo" className="w-32 h-32 mx-auto object-contain mb-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]" />
+                    <h1 className="text-4xl font-extrabold text-white tracking-tight drop-shadow-sm">Sugar Scout</h1>
+                    <p className="text-cyan-400 font-bold tracking-wide uppercase text-sm drop-shadow-[0_0_10px_rgba(34,211,238,0.3)]">Diabetic-friendly guide</p>
                 </div>
 
                 {/* Tab Navigation - Scrollable on mobile */}
-                <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0">
-                    <div className="flex p-1 space-x-1 bg-slate-200/50 rounded-xl min-w-max md:min-w-0">
+                <div className="overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0">
+                    <div className="flex p-1.5 space-x-1 bg-slate-900/60 border border-slate-700/50 backdrop-blur-xl rounded-xl min-w-max md:min-w-0 shadow-xl shadow-slate-900/50">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`px-4 md:px-0 md:w-full py-2.5 text-sm font-medium leading-5 rounded-lg transition-all duration-200 whitespace-nowrap
+                                className={`px-4 md:px-0 md:w-full py-2.5 text-sm leading-5 rounded-lg transition-all duration-300 whitespace-nowrap
                                     ${activeTab === tab.id
-                                        ? 'bg-white shadow text-slate-900'
-                                        : 'text-slate-600 hover:bg-white/[0.12] hover:text-slate-800'
+                                        ? 'bg-gradient-to-br from-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/30 text-white font-bold'
+                                        : 'text-slate-400 font-medium hover:bg-slate-800/80 hover:text-white'
                                     }`}
                             >
                                 {tab.label}
@@ -80,10 +82,11 @@ export default function App() {
                         activeTab === 'nutrition' ? <NutritionalFactsView /> :
                             activeTab === 'scanner' ? <SauceScannerView /> :
                                 activeTab === 'lab' ? <GlucoseLabView /> :
-                                    activeTab === 'supplies' ? <SupplyFinderView /> :
-                                        activeTab === 'hacks' ? <CommunityHacksView /> :
-                                            activeTab === 'events' ? <EventsView /> :
-                                                <DiabeticTipsView />}
+                                    activeTab === 'iob' ? <InsulinDecayView /> :
+                                        activeTab === 'supplies' ? <SupplyFinderView /> :
+                                            activeTab === 'hacks' ? <CommunityHacksView /> :
+                                                activeTab === 'events' ? <EventsView /> :
+                                                    <DiabeticTipsView />}
                 </div>
             </div>
             <Analytics />
